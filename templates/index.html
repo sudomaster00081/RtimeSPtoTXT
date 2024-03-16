@@ -1,0 +1,41 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice to Text</title>
+</head>
+<body>
+    <div>
+        <button id="startRecordBtn" onclick="startRecording()">
+            <img src="microphone-icon.png" alt="Microphone">
+        </button>
+        <textarea id="textInput" placeholder="Speak..." disabled></textarea>
+        <button id="copyBtn" onclick="copyToClipboard()" disabled>Copy</button>
+    </div>
+
+    <script>
+        let recognition = new webkitSpeechRecognition(); // for Chrome
+
+        recognition.onresult = function(event) {
+            let result = event.results[event.results.length - 1][0].transcript;
+            document.getElementById('textInput').value = result;
+            document.getElementById('copyBtn').disabled = false;
+        }
+
+        function startRecording() {
+            recognition.start();
+            document.getElementById('textInput').value = '';
+            document.getElementById('copyBtn').disabled = true;
+        }
+
+        function copyToClipboard() {
+            let text = document.getElementById('textInput').value;
+            navigator.clipboard.writeText(text)
+                .then(() => alert('Text copied to clipboard'))
+                .catch(err => console.error('Failed to copy text: ', err));
+        }
+    </script>
+</body>
+</html>
