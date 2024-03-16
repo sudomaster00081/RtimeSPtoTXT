@@ -5,22 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice to Text</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <div>
         <button id="startRecordBtn" onclick="startRecording()">
             <img src="microphone-icon.png" alt="Microphone">
         </button>
-        <textarea id="textInput" placeholder="Speak..." disabled></textarea>
+        <textarea id="textInput" class="text-input" placeholder="Speak..." disabled></textarea>
+        <button id="stopRecordBtn" onclick="stopRecording()" style="display: none;">Stop</button>
         <button id="copyBtn" onclick="copyToClipboard()" disabled>Copy</button>
     </div>
 
     <script>
         let recognition = new webkitSpeechRecognition(); // for Chrome
+        recognition.continuous = true;
 
         recognition.onresult = function(event) {
             let result = event.results[event.results.length - 1][0].transcript;
-            document.getElementById('textInput').value = result;
+            document.getElementById('textInput').value += result + ' ';
             document.getElementById('copyBtn').disabled = false;
         }
 
@@ -28,6 +31,14 @@
             recognition.start();
             document.getElementById('textInput').value = '';
             document.getElementById('copyBtn').disabled = true;
+            document.getElementById('startRecordBtn').style.display = 'none';
+            document.getElementById('stopRecordBtn').style.display = 'inline-block';
+        }
+
+        function stopRecording() {
+            recognition.stop();
+            document.getElementById('startRecordBtn').style.display = 'inline-block';
+            document.getElementById('stopRecordBtn').style.display = 'none';
         }
 
         function copyToClipboard() {
